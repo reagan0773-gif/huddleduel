@@ -1,0 +1,94 @@
+# Cloud builds for Huddle Duel (https://codemagic.io).
+# The native ios/ and android/ projects are generated fresh on every build
+# from www/, capacitor.config.json, and the scripts in scripts/.
+#
+# Start with the two "check" workflows. They need no Apple or Google account
+# and confirm the app compiles on both platforms.
+
+workflows:
+
+  ios-check:
+    name: iOS build check (no Apple account needed)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      node: 22
+      xcode: latest
+    scripts:
+      - name: Install packages
+        script: npm install
+      - name: Create and configure the iOS project
+        script: npm run setup:ios
+      - name: Build for the iPhone simulator
+        script: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App \
+            -sdk iphonesimulator -configuration Debug \
+            -derivedDataPath build/sim CODE_SIGNING_ALLOWED=NO build
+    artifacts:
+      - build/sim/Build/Products/**/*.app
+
+  android-check:
+    name: Android test build (installable APK)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      node: 22
+      java: 21
+    scripts:
+      - name: Install packages
+        script: npm install
+      - name: Create and configure the Android project
+        script: npm run setup:android
+      - name: Build debug APK
+        script: cd android && ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+
+  ios-release:
+    name: iOS release to TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Huddle Duel API key
+    environment:
+      node: 22
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.huddleduel.game
+    scripts:
+      - name: Install packages
+        script: npm install
+      - name: Create and configure the iOS project
+        script: npm run setup:ios
+      - name: Apply signing profiles
+        script: xcode-project use-profiles
+      - name: Build IPA
+        script: xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  android-release:
+    name: Android release (Google Play bundle)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      node: 22
+      java: 21
+      android_signing:
+        - huddle_duel_keystore
+    scripts:
+      - name: Install packages
+        script: npm install
+      - name: Create and configure the Android project
+        script: npm run setup:android
+      - name: Build signed app bundle
+        script: cd android && ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+    # After your first manual upload to Google Play, you can add automatic
+    # publishing here with a Google service account (see the guide).
