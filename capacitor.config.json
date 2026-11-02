@@ -1,0 +1,26 @@
+{
+  "appId": "com.huddleduel.game",
+  "appName": "Huddle Duel",
+  "webDir": "www",
+  "backgroundColor": "#0c1320",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#0c1320",
+    "scrollEnabled": false
+  },
+  "android": {
+    "backgroundColor": "#0c1320"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 900,
+      "launchAutoHide": true,
+      "backgroundColor": "#0c1320",
+      "showSpinner": false
+    },
+    "SystemBars": {
+      "insetsHandling": "css",
+      "initialViewportFitValueHint": "cover"
+    }
+  }
+}
