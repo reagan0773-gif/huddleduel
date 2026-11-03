@@ -7,6 +7,27 @@
 
 workflows:
 
+  store-screenshots:
+    name: Store screenshots and graphics
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      node: 22
+    scripts:
+      - name: Install packages
+        script: npm install
+      - name: Bundle fonts
+        script: npm run fonts
+      - name: Install the screenshot browser
+        script: |
+          npm install --no-save playwright
+          npx playwright install chromium
+      - name: Render screenshots
+        script: node scripts/screenshots.mjs
+    artifacts:
+      - store-assets/**/*.jpg
+      - store-assets/**/*.png
+
   ios-check:
     name: iOS build check (no Apple account needed)
     instance_type: mac_mini_m2

@@ -617,7 +617,7 @@ function recordHTML(){const r=getRecord();return `<div class="record"><div><b>${
 function boardHTML(){
   const flash={};if(lastScore){for(const k of ['home','away'])flash[k]=S.score[k]>lastScore[k]}
   lastScore={...S.score};
-  const t=k=>`<div class="team"><div class="tname"><span class="sw" style="background:var(--${k})"></span>${esc(S.names[k])}</div>
+  const t=k=>`<div class="team"><div class="tname" style="font-size:${S.names[k].length>10?10.5:S.names[k].length>8?12:14}px"><span class="sw" style="background:var(--${k})"></span>${esc(S.names[k])}</div>
     <div class="score${flash[k]?' flash':''}">${S.score[k]}</div><div class="ball-ind">${S.poss===k&&!S.over?'● BALL':''}</div></div>`;
   const q=S.over?'Final':S.quarter===5?'OT':'Qtr '+S.quarter;
   return `<div class="board">${t('home')}<div class="mid"><div class="clock">${clk(S.clock)}</div><div class="qtr">${q}</div></div>${t('away')}</div>`;

@@ -59,8 +59,10 @@ function patchIOS() {
   if (pbx) {
     let s = read(pbx);
     s = s.replace(/MARKETING_VERSION = [^;]+;/g, `MARKETING_VERSION = ${version};`)
-         .replace(/CURRENT_PROJECT_VERSION = [^;]+;/g, `CURRENT_PROJECT_VERSION = ${build};`);
-    write(pbx, s); ok(`Version ${version} (${build})`);
+         .replace(/CURRENT_PROJECT_VERSION = [^;]+;/g, `CURRENT_PROJECT_VERSION = ${build};`)
+         // iPhone only for now: iPad owners can still install it in iPhone mode
+         .replace(/TARGETED_DEVICE_FAMILY = [^;]+;/g, 'TARGETED_DEVICE_FAMILY = 1;');
+    write(pbx, s); ok(`Version ${version} (${build}), iPhone only`);
   } else warn('project.pbxproj not found');
 }
 

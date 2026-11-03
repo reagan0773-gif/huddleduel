@@ -132,6 +132,7 @@ save(master.resize((512, 512), Image.LANCZOS), 'play-store-icon-512.png')
 # Android legacy + round + adaptive foreground
 DENS = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
 fg_master = draw_emblem(1024, with_turf=False)
+save(fg_master, 'emblem-1024.png')  # transparent, used by the store graphics
 for name, k in DENS.items():
     s = int(48 * k)
     ic = full_icon(s * 2).resize((s, s), Image.LANCZOS)
